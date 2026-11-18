@@ -14,9 +14,13 @@
 
 ## 🌐 Live Deployments
 
-- **Frontend (Vercel)**: [https://adaptflow.vercel.app](https://adaptflow.vercel.app) *(or your imported Vercel project domain)*
+- **Frontend (Vercel)**: [https://adapt-flow-brown.vercel.app](https://adapt-flow-brown.vercel.app)
+  - 🏛️ [System Architecture](https://adapt-flow-brown.vercel.app/architecture)
+  - 📊 [Drift Engine](https://adapt-flow-brown.vercel.app/drift-engine)
+  - 🔄 [Feedback Loop](https://adapt-flow-brown.vercel.app/feedback-loop)
+  - 🛡️ [Governance & RLS](https://adapt-flow-brown.vercel.app/governance)
 - **Backend Gateway (Railway)**: [https://adaptflow-backend-production.up.railway.app](https://adaptflow-backend-production.up.railway.app)
-- **Health Check Endpoint**: [https://adaptflow-backend-production.up.railway.app/health](https://adaptflow-backend-production.up.railway.app/health)
+- **Live Healthcheck**: [https://adaptflow-backend-production.up.railway.app/health](https://adaptflow-backend-production.up.railway.app/health)
 - **GitHub Repository**: [https://github.com/hardik-mittal-18/AdaptFlow.git](https://github.com/hardik-mittal-18/AdaptFlow.git)
 
 ---
