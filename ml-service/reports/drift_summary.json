@@ -1,0 +1,79 @@
+{
+  "timestamp": "2026-11-18T07:06:18Z",
+  "drift_severity": "CRITICAL",
+  "drift_detected": true,
+  "drifted_features_count": 8,
+  "total_features_monitored": 8,
+  "production_window_samples": 150,
+  "reference_baseline_samples": 7043,
+  "per_feature_drift": {
+    "tenure": {
+      "type": "numeric",
+      "test": "2-Sample Kolmogorov-Smirnov",
+      "statistic": 0.8702,
+      "p_value": 0.0,
+      "drift_detected": true,
+      "threshold": 0.05
+    },
+    "MonthlyCharges": {
+      "type": "numeric",
+      "test": "2-Sample Kolmogorov-Smirnov",
+      "statistic": 0.9336,
+      "p_value": 0.0,
+      "drift_detected": true,
+      "threshold": 0.05
+    },
+    "TotalCharges": {
+      "type": "numeric",
+      "test": "2-Sample Kolmogorov-Smirnov",
+      "statistic": 0.6878,
+      "p_value": 0.0,
+      "drift_detected": true,
+      "threshold": 0.05
+    },
+    "Contract": {
+      "type": "categorical",
+      "test": "Population Stability Index (PSI)",
+      "statistic": 0.3921,
+      "drift_detected": true,
+      "threshold": 0.15
+    },
+    "InternetService": {
+      "type": "categorical",
+      "test": "Population Stability Index (PSI)",
+      "statistic": 0.5499,
+      "drift_detected": true,
+      "threshold": 0.15
+    },
+    "PaymentMethod": {
+      "type": "categorical",
+      "test": "Population Stability Index (PSI)",
+      "statistic": 0.6886,
+      "drift_detected": true,
+      "threshold": 0.15
+    },
+    "TechSupport": {
+      "type": "categorical",
+      "test": "Population Stability Index (PSI)",
+      "statistic": 4.3844,
+      "drift_detected": true,
+      "threshold": 0.15
+    },
+    "OnlineSecurity": {
+      "type": "categorical",
+      "test": "Population Stability Index (PSI)",
+      "statistic": 4.2281,
+      "drift_detected": true,
+      "threshold": 0.15
+    }
+  },
+  "policy_check": {
+    "drift_confirmed": true,
+    "verified_feedback_count": 35,
+    "feedback_threshold_met": true,
+    "cooldown_elapsed_hours": 32.0,
+    "cooldown_threshold_met": true,
+    "data_quality_passed": true,
+    "should_trigger_retraining": true
+  }
+}

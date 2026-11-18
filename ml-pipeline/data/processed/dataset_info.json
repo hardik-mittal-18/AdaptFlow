@@ -1,0 +1,8 @@
+{
+  "dataset_hash": "dvc-sha256-7840bb59ebbb23826ccd13faad8e3d19",
+  "total_records": 7043,
+  "feedback_samples_admitted": 0,
+  "raw_samples": 7043,
+  "columns_count": 21,
+  "output_path": "ml-pipeline/data/processed/merged_churn_data.csv"
+}

@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Production Builds
+dist/
+build/
+.next/
+
+# Environment Variables & Secrets (Keep .env.example)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Deployment & Local Tooling
+.vercel
+.railway
+
+# Machine Learning & Tracking Local Artifacts
+mlruns/
+mlflow.db
+mlflow_test.db
+.dvc/cache
+.dvc/tmp
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+models_cache/
+
+# System & Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db

@@ -1,0 +1,12 @@
+{
+  "champion_version": 4,
+  "champion_algorithm": "XGBoost",
+  "accuracy": 0.7118523775727467,
+  "f1": 0.6720516962843296,
+  "roc_auc": 0.7844392933787402,
+  "latency_ms": 0.004907523065950872,
+  "baseline_f1": 0.6497031382527566,
+  "f1_lift": 0.022348558031572985,
+  "dvc_hash": "dvc-sha256-83a9f041e892c9085817a22830f0f5",
+  "git_commit": "git-head-local"
+}

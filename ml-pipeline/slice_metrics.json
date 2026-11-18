@@ -1,0 +1,30 @@
+{
+  "Contract": {
+    "Month-to-month": {
+      "count": 3903,
+      "churn_rate": 0.5941583397386626
+    },
+    "One year": {
+      "count": 1484,
+      "churn_rate": 0.3146900269541779
+    },
+    "Two year": {
+      "count": 1656,
+      "churn_rate": 0.0929951690821256
+    }
+  },
+  "InternetService": {
+    "Fiber optic": {
+      "count": 3044,
+      "churn_rate": 0.5085413929040736
+    },
+    "DSL": {
+      "count": 2496,
+      "churn_rate": 0.3545673076923077
+    },
+    "No": {
+      "count": 1503,
+      "churn_rate": 0.3373253493013972
+    }
+  }
+}

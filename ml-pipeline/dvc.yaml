@@ -1,0 +1,70 @@
+stages:
+  ingest:
+    cmd: python src/ingest.py
+    deps:
+      - src/ingest.py
+      - data/raw/telco_churn_baseline.csv
+    outs:
+      - data/processed/merged_churn_data.csv
+      - data/processed/dataset_info.json
+
+  validate:
+    cmd: python src/validate.py data/processed/merged_churn_data.csv
+    deps:
+      - src/validate.py
+      - data/processed/merged_churn_data.csv
+
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+      - src/preprocess.py
+      - data/processed/merged_churn_data.csv
+      - params.yaml
+    params:
+      - data.test_size
+      - base.random_seed
+    outs:
+      - data/processed/X_train.npy
+      - data/processed/X_test.npy
+      - data/processed/y_train.npy
+      - data/processed/y_test.npy
+      - data/processed/preprocessor.joblib
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/processed/X_train.npy
+      - data/processed/y_train.npy
+      - params.yaml
+    params:
+      - training.cv_folds
+      - training.optuna_trials
+      - base.random_seed
+    outs:
+      - artifacts/confusion_matrix_lr.png
+      - artifacts/confusion_matrix_xgb.png
+      - artifacts/feature_importance_xgb.png
+
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+      - src/evaluate.py
+      - data/processed/merged_churn_data.csv
+      - data/processed/X_test.npy
+      - data/processed/y_test.npy
+    metrics:
+      - metrics.json:
+          cache: false
+      - slice_metrics.json:
+          cache: false
+
+  register:
+    cmd: python src/register.py
+    deps:
+      - src/register.py
+      - metrics.json
+      - params.yaml
+    params:
+      - gates.min_f1_lift
+      - gates.max_latency_ms

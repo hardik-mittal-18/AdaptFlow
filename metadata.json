@@ -1,0 +1,6 @@
+{
+  "name": "AdaptFlow – Self-Adaptive AI Systems with Feedback Loop",
+  "description": "Enterprise MLOps platform featuring continuous learning, feedback loops, data drift detection, automated model retraining, and Gemini AI MLOps Copilot.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,72 @@
+name: AdaptFlow Continuous Integration
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-validate:
+    name: Code Linting & Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Python Linters & Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff pytest pandera pydantic fastapi
+
+      - name: Lint Python Codebase with Ruff
+        run: |
+          ruff check ml-service ml-pipeline
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install Frontend Dependencies
+        run: |
+          npm ci
+
+      - name: Build React / Vite Frontend
+        run: |
+          npm run build
+
+  ml-tests:
+    name: ML Service & Pipeline Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install ML Requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ml-service/requirements.txt
+          pip install -r ml-pipeline/requirements.txt
+          pip install pytest httpx
+
+      - name: Execute ML Service Unit Tests
+        run: |
+          pytest ml-service/tests ml-pipeline/tests -v --disable-warnings
+
+      - name: Run Pandera Schema Sanity Check
+        run: |
+          python ml-pipeline/src/validate.py --input ml-pipeline/data/raw/telco_churn.csv

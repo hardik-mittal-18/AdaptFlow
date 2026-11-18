@@ -1,0 +1,35 @@
+base:
+  random_seed: 42
+  target_col: "Churn"
+  dvc_remote: "ml-pipeline/dvc_remote"
+
+data:
+  raw_path: "ml-pipeline/data/raw/telco_churn_baseline.csv"
+  feedback_path: "ml-pipeline/data/feedback/verified_feedback.csv"
+  processed_dir: "ml-pipeline/data/processed"
+  test_size: 0.20
+
+validation:
+  min_records: 100
+  max_missing_pct: 0.05
+  min_monthly_charges: 0.0
+  max_monthly_charges: 500.0
+
+training:
+  cv_folds: 5
+  optuna_trials: 5
+  models:
+    logistic_regression:
+      C: 1.0
+      max_iter: 1000
+    xgboost:
+      n_estimators: 111
+      max_depth: 3
+      learning_rate: 0.025
+      subsample: 0.85
+      colsample_bytree: 0.83
+
+gates:
+  min_f1_lift: 0.005 # Candidate must beat champion by at least 0.5%
+  max_slice_regression: 0.02 # No demographic slice can drop by > 2%
+  max_latency_ms: 10.0

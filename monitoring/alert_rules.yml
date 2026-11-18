@@ -1,0 +1,52 @@
+groups:
+  - name: adaptflow_mlops_alerts
+    rules:
+      - alert: MLServiceDown
+        expr: up{job="adaptflow-ml-service"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          tier: serving
+        annotations:
+          summary: "FastAPI ML Service is down"
+          description: "AdaptFlow ML serving instance has been unreachable for more than 1 minute."
+
+      - alert: HighInferenceLatency
+        expr: histogram_quantile(0.95, sum(rate(mlops_inference_latency_seconds_bucket[5m])) by (le)) > 0.020
+        for: 2m
+        labels:
+          severity: warning
+          tier: performance
+        annotations:
+          summary: "High P95 Inference Latency (>20ms)"
+          description: "95th percentile inference latency is {{ $value }}s, breaching the SLA threshold of 20ms."
+
+      - alert: HighInferenceErrorRate
+        expr: sum(rate(mlops_inference_requests_total{status="error"}[5m])) / sum(rate(mlops_inference_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          tier: serving
+        annotations:
+          summary: "Elevated Inference Error Rate (>5%)"
+          description: "Model inference request error rate is currently at {{ $value | humanizePercentage }}."
+
+      - alert: CriticalFeatureDriftDetected
+        expr: min(mlops_feature_drift_p_value) < 0.05
+        for: 5m
+        labels:
+          severity: critical
+          tier: drift
+        annotations:
+          summary: "Statistical Feature Drift Confirmed"
+          description: "One or more Telco features have drift p-value < 0.05 against baseline dataset. Retraining required."
+
+      - alert: ModelAccuracyDrop
+        expr: adaptflow_model_accuracy < 0.75
+        for: 10m
+        labels:
+          severity: warning
+          tier: model_quality
+        annotations:
+          summary: "Rolling Model Accuracy Degraded (<75%)"
+          description: "Verified customer feedback reveals current champion model accuracy has decayed to {{ $value | humanizePercentage }}."

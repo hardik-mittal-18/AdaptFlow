@@ -1,0 +1,67 @@
+name: AdaptFlow Continuous Retraining & Model Validation
+
+on:
+  schedule:
+    # Run every Sunday at midnight UTC
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+    inputs:
+      force_retrain:
+        description: 'Bypass drift checks and force full pipeline retraining'
+        required: false
+        default: 'false'
+        type: boolean
+  repository_dispatch:
+    types: [trigger-retraining]
+
+jobs:
+  retrain-pipeline:
+    name: Retrain, Evaluate & Register Candidate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install ML Requirements & DVC
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ml-pipeline/requirements.txt
+          pip install dvc cml
+
+      - name: Pull Latest Verified Feedback via DVC
+        run: |
+          dvc pull || echo "DVC remote simulated for CI"
+
+      - name: Execute DVC End-to-End Pipeline
+        env:
+          MLFLOW_TRACKING_URI: "sqlite:///mlflow.db"
+          MLFLOW_ENABLE_TELEMETRY: "false"
+        run: |
+          python ml-pipeline/src/preprocess.py --input ml-pipeline/data/raw/telco_churn.csv --output-dir ml-pipeline/data/processed
+          python ml-pipeline/src/train.py --data-dir ml-pipeline/data/processed --output-dir ml-pipeline/artifacts
+          python ml-pipeline/src/evaluate.py --data-dir ml-pipeline/data/processed --model-dir ml-pipeline/artifacts --metrics-output ml-pipeline/metrics.json
+          python ml-pipeline/src/register.py --metrics ml-pipeline/metrics.json --model-name TelcoChurnModel
+
+      - name: Generate Model Governance CML Report
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "## AdaptFlow Continuous Retraining Evaluation Report" > report.md
+          echo "" >> report.md
+          echo "### Candidate Model Performance vs Production Champion" >> report.md
+          cat ml-pipeline/metrics.json >> report.md
+          echo "" >> report.md
+          echo "### Confusion Matrix & Feature Importance" >> report.md
+          if [ -f ml-pipeline/artifacts/confusion_matrix_xgb.png ]; then
+            echo "![Confusion Matrix](./ml-pipeline/artifacts/confusion_matrix_xgb.png)" >> report.md
+          fi
+          if [ -f ml-pipeline/artifacts/feature_importance_xgb.png ]; then
+            echo "![Feature Importance](./ml-pipeline/artifacts/feature_importance_xgb.png)" >> report.md
+          fi
+          cml comment create report.md || cat report.md

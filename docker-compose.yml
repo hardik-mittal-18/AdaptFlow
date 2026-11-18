@@ -1,0 +1,140 @@
+version: '3.8'
+
+services:
+  # 1. Gateway & Web App (React + Express)
+  gateway:
+    build:
+      context: .
+      dockerfile: backend-gateway/Dockerfile
+    container_name: adaptflow-gateway
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - ML_SERVICE_URL=http://ml-service:8000
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+    depends_on:
+      ml-service:
+        condition: service_healthy
+    networks:
+      - adaptflow-network
+
+  # 2. Python FastAPI ML Service (Inference, Explainability, Telemetry)
+  ml-service:
+    build:
+      context: ./ml-service
+      dockerfile: Dockerfile
+    container_name: adaptflow-ml-service
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ML_SERVICE_PORT=8000
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - SUPABASE_URL=${VITE_SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      - mlflow
+    networks:
+      - adaptflow-network
+
+  # 3. PostgreSQL Database (MLflow & Metrics Storage)
+  postgres:
+    image: postgres:16-alpine
+    container_name: adaptflow-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=mlops
+      - POSTGRES_PASSWORD=mlopspassword
+      - POSTGRES_DB=mlflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mlops -d mlflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - adaptflow-network
+
+  # 4. MLflow Experiment Tracking & Model Registry Server
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.18.0
+    container_name: adaptflow-mlflow
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - BACKEND_STORE_URI=postgresql://mlops:mlopspassword@postgres:5432/mlflow
+    command: >
+      mlflow server
+      --backend-store-uri postgresql://mlops:mlopspassword@postgres:5432/mlflow
+      --default-artifact-root /mlflow/artifacts
+      --host 0.0.0.0
+      --port 5000
+    volumes:
+      - mlflow_artifacts:/mlflow/artifacts
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - adaptflow-network
+
+  # 5. Prometheus Observability Engine
+  prometheus:
+    image: prom/prometheus:v2.54.0
+    container_name: adaptflow-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+    networks:
+      - adaptflow-network
+
+  # 6. Grafana Operational Dashboards
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: adaptflow-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - adaptflow-network
+
+networks:
+  adaptflow-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mlflow_artifacts:
+  prometheus_data:
+  grafana_data:
