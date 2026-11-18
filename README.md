@@ -14,9 +14,9 @@
 
 ## 🌐 Live Deployments
 
-- **Frontend (Vercel)**: [https://adaptflow.vercel.app](https://adaptflow.vercel.app) *(or live Vercel URL)*
-- **Backend Gateway (Railway)**: [https://adaptflow-production.up.railway.app](https://adaptflow-production.up.railway.app)
-- **Health Check**: `GET /health` on the Railway backend URL
+- **Frontend (Vercel)**: [https://adaptflow.vercel.app](https://adaptflow.vercel.app) *(or your imported Vercel project domain)*
+- **Backend Gateway (Railway)**: [https://adaptflow-backend-production.up.railway.app](https://adaptflow-backend-production.up.railway.app)
+- **Health Check Endpoint**: [https://adaptflow-backend-production.up.railway.app/health](https://adaptflow-backend-production.up.railway.app/health)
 - **GitHub Repository**: [https://github.com/hardik-mittal-18/AdaptFlow.git](https://github.com/hardik-mittal-18/AdaptFlow.git)
 
 ---
