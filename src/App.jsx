@@ -10,6 +10,10 @@ import { ROLES } from './config/roles';
 
 // Public & Auth Pages
 import LandingPage from './pages/LandingPage';
+import ArchitecturePage from './pages/ArchitecturePage';
+import DriftEnginePage from './pages/DriftEnginePage';
+import FeedbackLoopPage from './pages/FeedbackLoopPage';
+import GovernancePage from './pages/GovernancePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminRegisterPage from './pages/admin/AdminRegisterPage';
@@ -52,6 +56,15 @@ export const App = () => {
             <Routes>
             {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />
+            <Route path="/architecture" element={<ArchitecturePage />} />
+            <Route path="/drift-engine" element={<DriftEnginePage />} />
+            <Route path="/feedback-loop" element={<FeedbackLoopPage />} />
+            <Route path="/governance" element={<GovernancePage />} />
+            {/* Helpful Redirect Aliases */}
+            <Route path="/drift" element={<Navigate to="/drift-engine" replace />} />
+            <Route path="/feedback" element={<Navigate to="/feedback-loop" replace />} />
+            <Route path="/security" element={<Navigate to="/governance" replace />} />
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/admin/register" element={<AdminRegisterPage />} />

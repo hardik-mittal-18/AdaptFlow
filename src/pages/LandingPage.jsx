@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Hero3DScene } from '../components/3d/Hero3DScene';
+import { PublicNavbar } from '../components/layout/PublicNavbar';
 import {
   Layers,
   Sparkles,
@@ -13,7 +14,9 @@ import {
   CheckCircle2,
   Lock,
   GitBranch,
-  Activity
+  Activity,
+  Shield,
+  GitMerge
 } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
@@ -33,47 +36,8 @@ export const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-blue-600/30 selection:text-white">
-      {/* Navbar */}
-      <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25">
-              <Layers className="h-5 w-5" />
-            </div>
-            <div>
-              <span className="text-lg font-bold tracking-tight text-white">AdaptFlow</span>
-              <span className="ml-2 rounded bg-blue-500/20 px-1.5 py-0.5 text-[10px] font-mono text-blue-400 font-bold">
-                ENTERPRISE
-              </span>
-            </div>
-          </div>
-
-          <nav className="hidden md:flex items-center gap-8 text-sm text-slate-400">
-            <a href="#features" className="hover:text-white transition-colors">Architecture</a>
-            <a href="#drift" className="hover:text-white transition-colors">Drift Engine</a>
-            <a href="#feedback" className="hover:text-white transition-colors">Feedback Loop</a>
-            <a href="#security" className="hover:text-white transition-colors">Governance & RLS</a>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            {user ? (
-              <Button onClick={handleDashboardClick} variant="primary" size="md">
-                <span>Go to My Dashboard</span>
-                <ArrowRight className="h-4 w-4 ml-1.5" />
-              </Button>
-            ) : (
-              <>
-                <Button onClick={() => navigate('/login')} variant="ghost" size="md">
-                  Sign In
-                </Button>
-                <Button onClick={() => navigate('/register')} variant="primary" size="md">
-                  Get Started
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+      {/* Universal Public Navbar */}
+      <PublicNavbar />
 
       {/* Hero Section with 3D Scene */}
       <section className="relative overflow-hidden pt-12 pb-20 md:py-24">
@@ -139,35 +103,85 @@ export const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card glass hover className="p-6 space-y-4">
-              <div className="h-12 w-12 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-400 border border-blue-500/30">
-                <Activity className="h-6 w-6" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Architecture Card */}
+            <Card glass hover className="p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="h-12 w-12 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-400 border border-blue-500/30">
+                  <Cpu className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-bold text-white">System Architecture</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Decoupled microservices with Vite frontend, Express gateway, FastAPI serving, and sub-4ms P95 latency budgets.
+                </p>
               </div>
-              <h3 className="text-lg font-bold text-white">Continuous Feedback Engine</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Captures verified real-world customer churn outcomes. Prevents label contamination by gating ingestion through supervised verification before triggering model retraining.
-              </p>
+              <Link
+                to="/architecture"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-400 hover:text-blue-300 pt-3 border-t border-slate-800/80 group"
+              >
+                <span>Explore Architecture</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </Card>
 
-            <Card glass hover className="p-6 space-y-4">
-              <div className="h-12 w-12 rounded-xl bg-indigo-600/20 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
-                <Cpu className="h-6 w-6" />
+            {/* Drift Engine Card */}
+            <Card glass hover className="p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="h-12 w-12 rounded-xl bg-rose-600/20 flex items-center justify-center text-rose-400 border border-rose-500/30">
+                  <Activity className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Drift Engine</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Evidently AI 2-sample Kolmogorov-Smirnov continuous tests and Population Stability Index (PSI) distribution tests.
+                </p>
               </div>
-              <h3 className="text-lg font-bold text-white">Evidently AI Statistical Drift</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Two-sample Kolmogorov-Smirnov test for continuous distributions and Population Stability Index (PSI) for categorical features to catch shifting consumer behavior in real time.
-              </p>
+              <Link
+                to="/drift-engine"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-400 hover:text-rose-300 pt-3 border-t border-slate-800/80 group"
+              >
+                <span>Explore Drift Engine</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </Card>
 
-            <Card glass hover className="p-6 space-y-4">
-              <div className="h-12 w-12 rounded-xl bg-emerald-600/20 flex items-center justify-center text-emerald-400 border border-emerald-500/30">
-                <GitBranch className="h-6 w-6" />
+            {/* Feedback Loop Card */}
+            <Card glass hover className="p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="h-12 w-12 rounded-xl bg-emerald-600/20 flex items-center justify-center text-emerald-400 border border-emerald-500/30">
+                  <GitMerge className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Feedback Loop</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Closed-loop ground-truth ingestion, Pandera schema gates, DVC dataset versioning, and Optuna 5-fold CV retraining.
+                </p>
               </div>
-              <h3 className="text-lg font-bold text-white">Blue-Green Promotion & RLS</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Validate candidate models across zero latency penalty and positive performance lift gates with instantaneous 1-click promotion and rollback secured by Supabase RLS policies.
-              </p>
+              <Link
+                to="/feedback-loop"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 hover:text-emerald-300 pt-3 border-t border-slate-800/80 group"
+              >
+                <span>Explore Feedback Loop</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </Card>
+
+            {/* Governance & RLS Card */}
+            <Card glass hover className="p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="h-12 w-12 rounded-xl bg-indigo-600/20 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
+                  <Shield className="h-6 w-6" />
+                </div>
+                <h3 className="text-lg font-bold text-white">Governance &amp; RLS</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Strict 4-role isolation matrix, Supabase Row-Level Security policies, and immutable audit trails.
+                </p>
+              </div>
+              <Link
+                to="/governance"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 pt-3 border-t border-slate-800/80 group"
+              >
+                <span>Explore Governance</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </Card>
           </div>
         </div>
